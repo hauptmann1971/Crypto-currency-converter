@@ -6,12 +6,15 @@ from tkinter import ttk
 from datetime import datetime
 import requests
 import json
+from config import *
+import psycopg2
+
 
 # Загрузка словаря криптовалют через API
 def setup_cryptocurrencies():
     global response
     try:
-        url = "https://api.coingecko.com/api/v3/coins/list"
+        url = URL_COINS
         headers = {"accept": "application/json"}
         response = requests.get(url, headers=headers)
         response_json = list(json.loads(response.text))
@@ -75,27 +78,22 @@ def show_rate():
         mb.showerror("Ошибка", f"Возникла ошибка:{response}")
         lbl.config(text="")
 
+def logger(crypto: str, currency: str, rate: float):
+    conn = psycopg2.connect(dbname=DATABASE_NAME, user=USER_NAME, password=PASSWORD, host=HOST_IP)
+    cursor = conn.cursor()
+    cursor.execute()
+
 
 # Словарь основных криптовалют
-crypto_currencies = {"bitcoin": "BITCOIN", "ethereum": "ETHEREUM", "cardano":  "CARDANO"}
+crypto_currencies = CRYPTO_CURRENCIES
 
 
 # Словарь основных валют
-currencies = {
-    "USD": "Американский доллар",
-    "EUR": "Евро",
-    "JPY": "Японская йена",
-    "GBP": "Британский фунт стерлингов",
-    "AUD": "Австралийский доллар",
-    "CAD": "Канадский доллар",
-    "CHF": "Швейцарский франк",
-    "CNY": "Китайский юань",
-    "RUB": "Российский рубль"
-             }
+currencies = CURRENCIES
 
 # Глобальные переменные для формирования запросов к API
-crypto_id = 'bitcoin'
-currency_name = 'Американский доллар'
+crypto_id = DEFUALT_CRYPTO
+currency_name = DEFAULT_CURRENCY_NAME
 response = None
 
 # Вызов функции для обновления словаря актуальных криптовалют
@@ -103,35 +101,35 @@ setup_cryptocurrencies()  # setup_cryptocurrencies()
 
 # Графический интерфейс с основным циклом программы
 root = Tk()
-root.title("Курсы криптовалют")
-icon = PhotoImage(file="crypto_icon.icon")
+root.title(MAIN_WINDOW_TITLE)
+icon = PhotoImage(file=MAIN_WINDOW_TITLE_ICON)
 root.iconphoto(False, icon)
-root. geometry("500x400")
+root.geometry(MAIN_WINDOW_GEOMETRY)
 
-combo_crypto_var = StringVar(value="Bitcoin")
-lbl_crypto = ttk.Label(text="Криптовалюта", font="Arial 14")
+combo_crypto_var = StringVar(value=DEFUALT_CRYPTO)
+lbl_crypto = ttk.Label(text=CRYPTO_CURRENCY_LABEL_TEXT, font=DEFAULT_FONT)
 lbl_crypto.pack(pady=10)
 combo_crypto = ttk.Combobox(root, textvariable=combo_crypto_var, values=list(crypto_currencies.values()),
-                            font="Arial 14")
+                            font=DEFAULT_FONT)
 
 combo_crypto.pack(pady=10)
 combo_crypto.bind("<<ComboboxSelected>>", get_crypto)
 
-combo_currency_var = StringVar(value="Американский доллар")
-lbl_currency = ttk.Label(text="Валюта", font="Arial 14")
+combo_currency_var = StringVar(value=DEFAULT_CURRENCY_NAME)
+lbl_currency = ttk.Label(text=CURRENCY_LABEL_TEXT, font=DEFAULT_FONT)
 lbl_currency.pack(pady=10)
 combo_currency = ttk.Combobox(root, textvariable=combo_currency_var, values=list(currencies.values()),
-                            font="Arial 14")
+                            font=DEFAULT_FONT)
 combo_currency.pack(pady=10)
 combo_currency.bind("<<ComboboxSelected>>", get_currency)
 
-lbl = ttk.Label(root, font="Arial 14")
+lbl = ttk.Label(root, font=DEFAULT_FONT)
 lbl.pack(pady=10)
 
-btn = Button(root, text="Получить курс", font="Arial 14", command=show_rate)
+btn = Button(root, text=BUTTON_TEXT, font=DEFAULT_FONT, command=show_rate)
 btn.pack(pady=10, anchor="s")
 
-lbl_date = ttk.Label(root, font="Arial 14")
+lbl_date = ttk.Label(root, font=DEFAULT_FONT)
 lbl_date.pack(pady=10)
 
 root.mainloop()
