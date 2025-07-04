@@ -11,7 +11,7 @@ CURRENCIES = {
     "CNY": "Китайский юань",
     "RUB": "Российский рубль"
              }
-DEFUALT_CRYPTO = "bitcoin"
+DEFAULT_CRYPTO = "bitcoin"
 DEFAULT_CURRENCY_NAME = "Американский доллар"
 MAIN_WINDOW_TITLE = "Курсы криптовалют"
 MAIN_WINDOW_TITLE_ICON = "crypto_icon.icon"

@@ -7,7 +7,7 @@ from datetime import datetime
 import requests
 import json
 from config import *
-import psycopg2
+#import psycopg2
 
 
 # Загрузка словаря криптовалют через API
@@ -79,7 +79,7 @@ def show_rate() -> None:
         lbl_date.config(text=f"Дата: {now.day}.{now.month}.{now.year}  Время: {now.hour} : {now.minute}")
         logger(rate, now)
     except Exception as exc:
-        mb.showerror("Ошибка", f"Возникла ошибка:{response}")
+        mb.showerror("Ошибка", f"Возникла ошибка:{response} / {exc}")
         lbl.config(text="")
 
 
@@ -171,6 +171,6 @@ btn.pack(pady=10, anchor="s")
 lbl_date = ttk.Label(root, font=DEFAULT_FONT)
 lbl_date.pack(pady=10)
 
-bd_init()
+#bd_init()
 
 root.mainloop()
