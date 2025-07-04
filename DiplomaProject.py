@@ -7,7 +7,7 @@ from datetime import datetime
 import requests
 import json
 from config import *
-#import psycopg2
+import psycopg2
 
 
 # Загрузка словаря криптовалют через API
@@ -88,13 +88,14 @@ def bd_init() -> None:
     try:
         conn = psycopg2.connect(dbname=DATABASE_NAME, user=USER_NAME, password=PASSWORD, host=HOST_IP)
         cursor = conn.cursor()
-        with cursor as curs:    # создание таблицы crypto
-            command = """CREATE TABLE crypto_currency
+        with cursor as curs:
+            #создание базы данных DATABASE_NAME и таблицы crypto, если они еще не созданы
+            command = f"""CREATE TABLE IF NOT EXISTS crypto_currency 
                                 (ID INT PRIMARY KEY NOT NULL,
                                 CRIPTO_NAME TEXT NOT NULL,
                                 CURRENCY_NAME TEXT NOT NULL, 
                                 RATE REAL NOT NULL,
-                                TIME_POINT TIMESTAMP)"""
+                                TIME_POINT TIMESTAMP);"""
             curs.execute(command)
             conn.commit()
     except (Exception, psycopg2.Error) as error:
@@ -114,8 +115,8 @@ def logger(rate: str, now: datetime) -> None:
                 id_last = curs.fetchall()[-1][0]
             else:
                 id_last = 0
-            command = """ INSERT INTO crypto_currency (ID, CRIPTO_NAME, CURRENCY_NAME, RATE, TIME_POINT)
-                                       VALUES (%s,%s,%s,%s,%s)"""
+            command = """INSERT INTO crypto_currency (ID, CRIPTO_NAME, CURRENCY_NAME, RATE, TIME_POINT)
+                                       VALUES (%s, %s, %s, %s, %s)"""
             record = (id_last + 1, str(crypto_id), str(currency_name), rate, now)
             curs.execute(command, record)
     except (Exception, psycopg2.Error) as error:
@@ -171,6 +172,6 @@ btn.pack(pady=10, anchor="s")
 lbl_date = ttk.Label(root, font=DEFAULT_FONT)
 lbl_date.pack(pady=10)
 
-#bd_init()
+bd_init()
 
 root.mainloop()
