@@ -34,4 +34,5 @@ USER_NAME = "kalmyk3j_romanov"
 PASSWORD = "6xkGG33NX9%p"
 HOST_IP = "kalmyk3j.beget.tech"
 
+SQL_FILE_NAME = "db_init.sql"
 

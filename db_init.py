@@ -1,12 +1,28 @@
-import mysql.connector
+import mysql.connector as mysqlconn
 from config import *
 
+
+def sql_query(query: str) -> str:
+    lst = [i.split() for i in query.split(';')]
+    print(lst)
+
+
+
+content = ''
 try:
-    with mysql.connector.connect(host=HOST_IP,
-                                 user=USER_NAME,
-                                 password=PASSWORD) as connection:
-        with connection.cursor() as cursor:
-            print(cursor.execute("SELECT * FROM crypto_currency;"))
-        print(connection.get_server_info())
-except mysql.connector.Error as error:
-    print(error)
+    with open(SQL_FILE_NAME, 'r') as file:
+        content = file.read()
+        command = content
+        print(content)
+except FileNotFoundError as e:
+        print(e)
+
+with mysqlconn.connect(host=HOST_IP,
+                       user=USER_NAME,
+                       password=PASSWORD) as connection:
+    try:
+            with connection.cursor() as cursor:
+                cursor.execute(command)
+
+    except mysqlconn.Error as e:
+        print(e)
