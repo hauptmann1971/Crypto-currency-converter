@@ -62,8 +62,13 @@ def insert_data(crypto_name: str, currency_name: str, exchange_rate: float) -> b
         record = f'''SELECT * FROM crypto_currency
                      WHERE ID = {cursor.lastrowid};'''
         cursor.execute(record)
-        print(cursor.fetchone())
-        return True
+        last_record = cursor.fetchone()
+        print(last_record[1::])
+        print([currency_name, currency_name, exchange_rate, current_time])
+        if last_record[1::] == [currency_name, currency_name, exchange_rate, current_time]:
+            return True
+        else:
+            return False
 
     except Error as e:
         print(f"Ошибка при вставке данных: {e}")
@@ -74,17 +79,3 @@ def insert_data(crypto_name: str, currency_name: str, exchange_rate: float) -> b
             cursor.close()
             conn.close()
 
-
-create_table()
-
-# Тестовые данные
-success = insert_data(
-        crypto_name="Bitcoin",
-        currency_name="RUB",
-        exchange_rate=10000000.12345678
-    )
-
-if success:
-    print("Транзакция выполнена успешно!")
-else:
-    print("Ошибка при выполнении транзакции")
