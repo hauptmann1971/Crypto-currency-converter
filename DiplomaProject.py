@@ -8,6 +8,7 @@ import requests
 import json
 from config import *
 import psycopg2
+from Test_db_logger import create_table, insert_data
 
 
 # Загрузка словаря криптовалют через API
@@ -64,7 +65,7 @@ def show_rate() -> None:
         response = get_rate()
         crypto: str = ''
         currency: str = ''
-        rate: str = ''
+        rate: float = 0.0
         for k, v in response.items():
             crypto = k
             if v == {}:
@@ -77,51 +78,10 @@ def show_rate() -> None:
         lbl.config(text=f'Курс "{crypto.upper()}" к\n"{currencies[currency.upper()]}": {rate: .6f}')
         now: datetime = datetime.now()
         lbl_date.config(text=f"Дата: {now.day}.{now.month}.{now.year}  Время: {now.hour} : {now.minute}")
-        logger(rate, now)
+        insert_data(crypto_name=crypto, currency_name=currency, exchange_rate=rate)
     except Exception as exc:
         mb.showerror("Ошибка", f"Возникла ошибка:{response}")
         lbl.config(text="")
-
-
-# Инициализация базы данных Postgres для записи текущего курса криптовалюты к фиатной валюте и текущей даты и времени
-def bd_init() -> None:
-    try:
-        conn = psycopg2.connect(dbname=DATABASE_NAME, user=USER_NAME, password=PASSWORD, host=HOST_IP)
-        cursor = conn.cursor()
-        with cursor as curs:    # создание таблицы crypto
-            command = """CREATE TABLE crypto_currency
-                                (ID INT PRIMARY KEY NOT NULL,
-                                CRIPTO_NAME TEXT NOT NULL,
-                                CURRENCY_NAME TEXT NOT NULL, 
-                                RATE REAL NOT NULL,
-                                TIME_POINT TIMESTAMP)"""
-            curs.execute(command)
-            conn.commit()
-    except (Exception, psycopg2.Error) as error:
-        print("Ошибка при работе с PostgreSQL", error)
-
-
-# Запись в базу данных
-def logger(rate: str, now: datetime) -> None:
-    try:
-        conn = psycopg2.connect(dbname=DATABASE_NAME, user=USER_NAME, password=PASSWORD, host=HOST_IP)
-        cursor = conn.cursor()
-        with cursor as curs:
-            command = "SELECT * FROM crypto_currency" #считывание строк из таблицы crypto
-            curs.execute(command)
-            print(curs.fetchall())
-            if len(curs.fetchall()):
-                id_last = curs.fetchall()[-1][0]
-            else:
-                id_last = 0
-            command = """ INSERT INTO crypto_currency (ID, CRIPTO_NAME, CURRENCY_NAME, RATE, TIME_POINT)
-                                       VALUES (%s,%s,%s,%s,%s)"""
-            record = (id_last + 1, str(crypto_id), str(currency_name), rate, now)
-            curs.execute(command, record)
-    except (Exception, psycopg2.Error) as error:
-        print("Ошибка при работе с PostgreSQL:")
-        print(error)
-
 
 
 # Словарь основных криптовалют
@@ -171,6 +131,6 @@ btn.pack(pady=10, anchor="s")
 lbl_date = ttk.Label(root, font=DEFAULT_FONT)
 lbl_date.pack(pady=10)
 
-bd_init()
+create_table()
 
 root.mainloop()
