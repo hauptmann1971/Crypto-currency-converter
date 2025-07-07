@@ -11,6 +11,7 @@ CURRENCIES = {
     "CNY": "Китайский юань",
     "RUB": "Российский рубль"
              }
+
 DEFAULT_CRYPTO = "bitcoin"
 DEFAULT_CURRENCY_NAME = "Американский доллар"
 MAIN_WINDOW_TITLE = "Курсы криптовалют"
@@ -20,7 +21,18 @@ CRYPTO_CURRENCY_LABEL_TEXT = "Криптовалюта"
 CURRENCY_LABEL_TEXT = "Валюта"
 BUTTON_TEXT = "Получить курс"
 DEFAULT_FONT = "Arial 14"
-DATABASE_NAME = 'kalmyk3j_romanov'
-USER_NAME = 'kalmyk3j_romanov'
-PASSWORD = '6xkGG33NX9%p'
-HOST_IP="kalmyk3j.beget.tech"
+
+#PostGre parameters:
+'''DATABASE_NAME = "hauptmann"
+USER_NAME = "romanov"
+PASSWORD = "2511"
+HOST_IP = "127.0.0.1"'''
+
+#MySQL parameters:
+DATABASE_NAME = "kalmyk3j_romanov"
+USER_NAME = "kalmyk3j_romanov"
+PASSWORD = "6xkGG33NX9%p"
+HOST_IP = "kalmyk3j.beget.tech"
+
+SQL_FILE_NAME = "db_init.sql"
+
