@@ -78,7 +78,7 @@ def show_rate() -> None:
         lbl.config(text=f'Курс "{crypto.upper()}" к\n"{currencies[currency.upper()]}": {rate: .6f}')
         now = datetime.now()
         lbl_date.config(text=f"Дата/{now.day}/{now.month}/{now.year}  Время: {now.hour}:{now.minute}")
-        if not insert_data(crypto_name=crypto, currency_name=currency, exchange_rate=rate, current_time=now.strftime("%d-%m-%Y %H:%M")):
+        if not insert_data(crypto_name=crypto, currency_name=currency, exchange_rate=rate, current_time=now):
             mb.showerror("Запись в базу данных", "Ошибка записи запроса в базу данных")
         else:
             mb.showinfo("Запись в базу данных", "Запись в базу данных произведена успешно")

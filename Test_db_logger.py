@@ -24,7 +24,7 @@ def create_table() -> None:
             crypto_name VARCHAR(50) NOT NULL,
             currency_name VARCHAR(10) NOT NULL,
             exchange_rate DECIMAL(20, 8) NOT NULL,
-            timestamp VARCHAR(50) NOT NULL,
+            timestamp TIMESTAMP NOT NULL,
             INDEX (crypto_name, currency_name));
         """
         cursor.execute(record)
@@ -39,7 +39,7 @@ def create_table() -> None:
             conn.close()
 
 
-def insert_data(crypto_name: str, currency_name: str, exchange_rate: float, current_time: str) -> bool:
+def insert_data(crypto_name: str, currency_name: str, exchange_rate: float, current_time) -> bool:
     """Вставляет данные о курсе криптовалюты в БД"""
     
     try:
@@ -55,18 +55,15 @@ def insert_data(crypto_name: str, currency_name: str, exchange_rate: float, curr
                 """
                 
                 record = (crypto_name, currency_name, exchange_rate, current_time)
-
                 cursor.execute(insert_query, record)
                 conn.commit()
                 record = f'''SELECT * FROM crypto_currency
                              WHERE ID = {cursor.lastrowid};'''
                 cursor.execute(record)
                 crypto, currency, rate, date_time = cursor.fetchone()[1::]
-                
-                print(crypto, currency, rate, date_time)
-                
+                                           
                 print(crypto_name, currency_name, exchange_rate, date_time)
-                if crypto == crypto_name and currency == currency_name and round(rate) == round(exchange_rate) and date_time == current_time:
+                if crypto == crypto_name and currency == currency_name and round(rate) == round(exchange_rate) and round(date_time.timestamp()) == round(current_time.timestamp()):
                     return True
                 else:
                     return False
